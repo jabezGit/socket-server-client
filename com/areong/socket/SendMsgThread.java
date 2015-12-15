@@ -5,7 +5,6 @@ import java.io.IOException;
 import java.net.Socket;
 
 public class SendMsgThread extends Thread{
-	private boolean isRunning;
 	private Socket socket;
 	private DataOutputStream os;
 	private byte[] MsgToSend;
@@ -15,14 +14,13 @@ public class SendMsgThread extends Thread{
 		this.socket =socket;
 		this.MsgToSend=msg;
 		this.MsgToSendLen=Len;
-		isRunning=true;
 	}
 	
 	public void run(){
             try {
 				os = new DataOutputStream(socket.getOutputStream());
 			} catch (IOException e1) {
-				e1.printStackTrace();
+				System.out.println("发送数据失败");
 			}
             	if(os!=null){
 					try {	
@@ -31,12 +29,13 @@ public class SendMsgThread extends Thread{
 							os.write(MsgToSend, 0, MsgToSendLen);
 						}
 					} catch (IOException e) {
-						e.printStackTrace();
+						System.out.println("发送数据失败");
 					}	
 				}
-				stopRunning();	    	
+				try {
+					os.close();
+				} catch (IOException e) {
+					System.out.println("发送数据异常");
+				}	    	
 	}
-	 public void stopRunning() {
-	        isRunning = false;
-	    }
 }

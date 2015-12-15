@@ -8,11 +8,9 @@ import java.util.ArrayList;
 public class SocketServer {
     private ServerSocket serverSocket;
     private ListeningThread listeningThread;
-    volatile private byte[] messageHandler;
     private int queueSize =10;
 
-    public SocketServer(int port, byte[] handler) {
-        messageHandler = handler;
+    public SocketServer(int port) {
         try {
             serverSocket = new ServerSocket();
             // 配置ServerSocket的信能参数：以寻得最好的socket性能
@@ -35,14 +33,6 @@ public class SocketServer {
         }
     }
     
-    public void setMessageHandler(byte[] handler) {
-        messageHandler = handler;
-    }
-
-    public byte[] getMessageHandler() {
-        return messageHandler;
-    }
-    
     /*
      * Not ready for use.
      */
@@ -51,7 +41,7 @@ public class SocketServer {
             serverSocket.close();
         } catch (IOException e) {
             // TODO Auto-generated catch block
-            e.printStackTrace();
+           System.out.println("服务器关闭失败");
         }
     }
 }

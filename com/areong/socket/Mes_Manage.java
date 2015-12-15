@@ -1,7 +1,6 @@
 package com.areong.socket;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 import Msg.Client_table_item;
 import Msg.msg;
@@ -18,7 +17,7 @@ public class Mes_Manage extends Thread{
 	}
 	
 	private int iscontains(short addr){
-		// 遍历列表的话，就不能从0开始了
+		// 这里还有可优化的空间，可以用哈希表来搜索，当数据有很多条的时候，使用哈希表，速度会提高很多
 		for (int j = 0; j < this.table.size(); j++) {
 			if(this.table.get(j).getDestNum()==addr)
 				return j;
@@ -39,6 +38,7 @@ public class Mes_Manage extends Thread{
 			for (int i = 0; i < connections.size(); i++) {
 				if(connections.get(i).getSocket().isClosed()){
 					connections.remove(i);
+					System.out.println("目前系统内客户端数目为："+connections.size());
 				}
 			}
 			
@@ -50,6 +50,7 @@ public class Mes_Manage extends Thread{
 			// 第一：遍历表获得最新的连接数据		
 			for (int i = 0; i < connections.size(); i++) {
 				if(connections.get(i).getData() != null){
+					//这条语句和上一条语句的顺序是不能更换的。
 					msg original_data = new msg(connections.get(i).getData());
 					// 这里会出错
 					if(original_data.CCR_check()){
@@ -59,12 +60,13 @@ public class Mes_Manage extends Thread{
 							Client_table_item item = new Client_table_item();
 							// 将地址加入到
 							item.setDestNum(original_data.getSourAddr());
-							item.setSocket(connections.get(i).getSocket());		
+							item.setSocket(connections.get(i).getSocket());	
+							System.out.println("<<<<<<<<<<<加入了一个客户端到客户列表中");
 							this.table.add(item);
 						}
 					}
 					else{
-						System.out.println(Arrays.toString(connections.get(i).getData()));
+						System.out.println("数据未通过校验");
 					}
 				}
 			}
@@ -88,6 +90,8 @@ public class Mes_Manage extends Thread{
 									table.get(SourAddr).setDataLen(connections.get(j).getDateLen());
 								}		
 						}
+					}else{
+						System.out.println("数据未通过校验");
 					}
 				}
 			}
@@ -96,6 +100,7 @@ public class Mes_Manage extends Thread{
 					// 只有在有数据并且Socket没有关闭的情况下，才发送数据
 					if(table.get(n).getData()!=null&&!table.get(n).getSocket().isClosed()){
 						new SendMsgThread(table.get(n).getSocket(), table.get(n).getData(), table.get(n).getDataLen()).start();	
+						System.out.println(">>>>>>>>>>>>发送数据");
 						table.get(n).setData(null);
 					}
 				}			
