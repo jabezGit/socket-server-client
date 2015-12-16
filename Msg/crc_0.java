@@ -42,12 +42,12 @@ public class crc_0 {
 	public static void main(String[] args) {
 		// TODO Auto-generated method stub
 		//byte[] test = {0X00,0X01,0X00,0X02,0X0B,0X0C,(byte) 0XFF,(byte) 0XFF,(byte) 0XFF,(byte) 0XFF,(byte) 0XFF,(byte) 0XFF};
-		byte[] test = {0X00,0X01,0X00,0X02,0X15,0X06,(byte) 0XFF,(byte) 0XFF,(byte) 0XFF,(byte) 0XFF,(byte) 0XFF,(byte) 0XFF};
+		byte[] test = {(byte) 0XFF,(byte) 0XFF,0X00,0X00,0X0B,0X06};
 		 for (int j = 0; j < test.length; j++) {
          	System.out.println(test[j]);
 				//out.print(test[i]);
 			}
-		System.out.println(Integer.toHexString(RRC16(test,12)));
+		System.out.println(Integer.toHexString(RRC16(test,test.length)));
 
 	}
 	

@@ -12,6 +12,7 @@ public class msg {
 	int Sync_offset = 2;
 	int Sync_Sour_offset = Sync_offset;
 	int Sync_Dest_offset = 4;
+	int Msg_type = 6;
 	int Len_offset = 7;
 	int data_offset =8;
 	
@@ -55,6 +56,7 @@ public class msg {
 		return getMsg(Len_offset);
 	}
 
+
 	 // 获得对应的CCR这是双字节的
 	private short getCCR(){
 		return (short) ((getMsg(getCCR_offset()+0) << 8) | (getMsg(getCCR_offset()+1)& 0xff));
@@ -73,6 +75,18 @@ public class msg {
 	public void setMsg(byte[] msg) {
 		this.msg = msg;
 	}
+	
+	public int getMsgType(){
+		switch(getUint8(getMsg(Msg_type))){
+		case 11:
+			return 1;
+		case 21:
+			return 2;
+		default:
+			return 0;
+		}
+	}
+	
 	// 获得数据的校验
 	public boolean CCR_check(){
 		byte[] read_data = Arrays.copyOfRange(getMsg(), Sync_offset, getCCR_offset());

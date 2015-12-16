@@ -19,8 +19,10 @@ public class Mes_Manage extends Thread{
 	private int iscontains(short addr){
 		// 这里还有可优化的空间，可以用哈希表来搜索，当数据有很多条的时候，使用哈希表，速度会提高很多
 		for (int j = 0; j < this.table.size(); j++) {
-			if(this.table.get(j).getDestNum()==addr)
+			if(this.table.get(j).getDestNum()==addr){
+//				System.out.println("比较函数：table拿到的地址为："+this.table.get(j).getDestNum()+"addr:"+addr);
 				return j;
+			}
 		}
 		return -1;
 	}
@@ -29,7 +31,7 @@ public class Mes_Manage extends Thread{
 		while(isRunning) {
 			// 这里要加入延迟，否则工作就不正常
 			try {
-				Thread.sleep(1);
+				Thread.sleep(10);
 			} catch (InterruptedException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
@@ -54,15 +56,20 @@ public class Mes_Manage extends Thread{
 					msg original_data = new msg(connections.get(i).getData());
 					// 这里会出错
 					if(original_data.CCR_check()){
-						// 判读队列中是否为空，或者队列中没有源地址
+						// 判读队列中是否为空，或者队列中没有源地址，如果目的地址为
 						if(this.table.isEmpty()||(iscontains(original_data.getSourAddr())== -1)){
-						// 将地址加入到List中	
-							Client_table_item item = new Client_table_item();
-							// 将地址加入到
-							item.setDestNum(original_data.getSourAddr());
-							item.setSocket(connections.get(i).getSocket());	
-							System.out.println("<<<<<<<<<<<加入了一个客户端到客户列表中");
-							this.table.add(item);
+							if(original_data.getSourAddr()!=0){
+							// 将地址加入到List中	
+								Client_table_item item = new Client_table_item();
+								// 将地址加入到
+								item.setDestNum(original_data.getSourAddr());
+								item.setSocket(connections.get(i).getSocket());	
+								System.out.println("加入的地址为:"+original_data.getSourAddr());
+								System.out.println("<<<<<<<<<<<加入了一个客户端到客户列表中");
+								this.table.add(item);
+							}else{
+								System.out.println("客户端发送数据的地址有误");
+							}
 						}
 					}
 					else{
@@ -75,23 +82,23 @@ public class Mes_Manage extends Thread{
 			for (int j = 0; j < connections.size(); j++) {
 				if(connections.get(j).getData()!=null){
 					msg original_data2=new msg(connections.get(j).getData());
-					// 如果获得的数据CCR没有错
-					if(original_data2.CCR_check()){
+					// 如果获得的数据CCR没有错，并且数据不是心跳包
+					if(original_data2.getMsgType()!=1 && original_data2.CCR_check()){
 						// 判读队列中是否为空，或者队列中有要发送的目的地址
 						if(!table.isEmpty()){
 						// 循环遍历列表查找目的地址
-								// 找到了目的地址
+								// 找到了目的地址						
 								int SourAddr=iscontains(original_data2.getDestAddr());
 								if(SourAddr!= -1){
 									//将数据加到这个列表元素中
-									// 目前的数据加到源目的地址上去			
+									// 目前的数据加到源目的地址上去		
 									table.get(SourAddr).setData(connections.get(j).getData());
 									//将数据的长度加到这个列表元素中
 									table.get(SourAddr).setDataLen(connections.get(j).getDateLen());
 								}		
 						}
 					}else{
-						System.out.println("数据未通过校验");
+						System.out.println("心跳包不发送");
 					}
 				}
 			}

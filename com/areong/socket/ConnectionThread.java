@@ -52,25 +52,19 @@ class ConnectionThread extends Thread {
 	    			// 如果不加这个循环维持接收线程，那么将不能循环读取数据
 	    			while(isRunning){
 	    				read_length = br.read(encry_byte);
-	    				//调试用
-//	    				System.out.println("拿到了连接数据");
-	    				// 判断客户端是否断开了连接
-	    				// 
 	    				if(read_length== -1){
 	    					stopRunning();
 	    					break;
 	    				}
-	 
-	        			// 将数据传出去	
 	    				this.message = encry_byte;
 	    				this.dataLen = read_length;	    
 	        		}
-	    			if(is!=null)
-	    				is.close();
-	    			if(os!=null)
-	    				os.close();
-	    			if(br!=null)
-	    				br.close();
+		    			if(is!=null)
+		    				is.close();
+		    			if(os!=null)
+		    				os.close();
+		    			if(br!=null)
+		    				br.close();
             } catch (IOException e) {
             	stopRunning();
                 System.out.println("连接超时，关闭与客户端连接");

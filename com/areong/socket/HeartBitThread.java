@@ -26,7 +26,7 @@ public class HeartBitThread extends Thread{
 				System.out.println("发送心跳包数据失败");
 			}
           
-				byte[] HeartBit_Pack = {(byte) 0xAA,0x44,(byte) 0Xff,(byte) 0Xff,0X00,0X01,0X0B,0X00,0x10,(byte) 0XAF};
+				byte[] HeartBit_Pack = {(byte) 0xAA,0x44,(byte) 0XFF,(byte) 0XFF,(byte) 0X00,(byte) 0X00,0X0B,0X00,0x08,(byte) 0X2F};
 		
 				if(os!=null){
 					try {

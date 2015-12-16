@@ -24,7 +24,7 @@ public class SocketServer {
             serverSocket.setPerformancePreferences(1, 2, 0);
             // 服务器绑定端口，queueSize为服务器连接请求队列长度
             serverSocket.bind(new InetSocketAddress(port), queueSize);
-            
+            // 开启监听线程，并启动
             listeningThread = new ListeningThread(this, serverSocket);
             listeningThread.start();
         } catch (IOException e) {

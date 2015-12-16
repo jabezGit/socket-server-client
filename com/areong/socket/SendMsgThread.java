@@ -32,10 +32,6 @@ public class SendMsgThread extends Thread{
 						System.out.println("发送数据失败");
 					}	
 				}
-				try {
-					os.close();
-				} catch (IOException e) {
-					System.out.println("发送数据异常");
-				}	    	
+				// 这里如果执行了os.close; 那么这个socket连接就被释放了。所以这里不需要关闭	    	
 	}
 }
