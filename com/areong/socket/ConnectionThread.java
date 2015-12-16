@@ -49,9 +49,9 @@ class ConnectionThread extends Thread {
 	                is = new DataInputStream(socket.getInputStream());
 	                os = new DataOutputStream(socket.getOutputStream());
 	    			br = new BufferedInputStream(is);
-	    			// 如果不加这个循环维持接收线程，那么将不能循环读取数据
 	    			while(isRunning){
 	    				read_length = br.read(encry_byte);
+	    				// 判读客户端是否断开了
 	    				if(read_length== -1){
 	    					stopRunning();
 	    					break;

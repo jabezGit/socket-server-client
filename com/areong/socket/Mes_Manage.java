@@ -7,12 +7,13 @@ import Msg.msg;
 
 public class Mes_Manage extends Thread{
 	private boolean isRunning;
-	private List<ConnectionThread> connections = new ArrayList<ConnectionThread>();
-	private List<Client_table_item> table = new ArrayList<Client_table_item>();
+    private List<ConnectionThread> connections = new ArrayList<ConnectionThread>();
+    private List<Client_table_item> table = new ArrayList<Client_table_item>();
 	
 	
 	public Mes_Manage(List<ConnectionThread> connections){
 		this.connections = connections;
+		// 启动发送线程
 		isRunning=true;
 	}
 	
@@ -28,13 +29,12 @@ public class Mes_Manage extends Thread{
 	}
 	
 	public void run(){
+		new SendMsgThread_KeepAlive(table).start();
 		while(isRunning) {
 			// 这里要加入延迟，否则工作就不正常
 			try {
-				Thread.sleep(10);
+				Thread.sleep(1);
 			} catch (InterruptedException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
 			}
 			// 先检查是否有客户端断开了，如果断开了，就将它从列表中删除
 			for (int i = 0; i < connections.size(); i++) {
@@ -102,15 +102,22 @@ public class Mes_Manage extends Thread{
 					}
 				}
 			}
-			// 3：遍历列表，向链表里每一个元素都创建一个发送线程
+			
+			
+			
+/*			 3：遍历列表，向链表里每一个元素都创建一个发送线程
 				for(int n = 0; n < table.size(); n++){
 					// 只有在有数据并且Socket没有关闭的情况下，才发送数据
 					if(table.get(n).getData()!=null&&!table.get(n).getSocket().isClosed()){
+						// 这里可以没必要一直的创建线程，可以创建一个用于发送的就可以了
 						new SendMsgThread(table.get(n).getSocket(), table.get(n).getData(), table.get(n).getDataLen()).start();	
 						System.out.println(">>>>>>>>>>>>发送数据");
 						table.get(n).setData(null);
 					}
-				}			
+				}*/	
+			
+			
+			
 			// 4：清空列表，等待下一次数据接受	
 				for (int i = 0; i < connections.size(); i++) {
 					connections.get(i).setDataLen(0);
