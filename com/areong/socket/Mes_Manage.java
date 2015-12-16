@@ -36,32 +36,37 @@ public class Mes_Manage extends Thread{
 				Thread.sleep(1);
 			} catch (InterruptedException e) {
 			}
+			
 			// 先检查是否有客户端断开了，如果断开了，就将它从列表中删除
 			for (int i = 0; i < connections.size(); i++) {
+				// 如果有客户端断开了
 				if(connections.get(i).getSocket().isClosed()){
+					// 删除这个连接
 					connections.remove(i);
 					System.out.println("目前系统内客户端数目为："+connections.size());
 				}
 			}
 			
 			for (int i = 0; i < table.size(); i++) {
+				// 如果有客户端断开了
 				if(table.get(i).getSocket().isClosed()){
+					// 删除表里的为他登记的目的地址
 					table.remove(i);
 				}
 			}
-			// 第一：遍历表获得最新的连接数据		
+			// 1：遍历表获得目前连接到服务器的所有客户端		
 			for (int i = 0; i < connections.size(); i++) {
+				// 如果收到的数据不为空
 				if(connections.get(i).getData() != null){
-					//这条语句和上一条语句的顺序是不能更换的。
 					msg original_data = new msg(connections.get(i).getData());
-					// 这里会出错
+					// 如果收到的数据校验后没有错误
 					if(original_data.CCR_check()){
-						// 判读队列中是否为空，或者队列中没有源地址，如果目的地址为
+						// 如果表为空或者这个源地址是新的地址
 						if(this.table.isEmpty()||(iscontains(original_data.getSourAddr())== -1)){
+							// 如果源地址没有错误
 							if(original_data.getSourAddr()!=0){
-							// 将地址加入到List中	
+								// 将地址和socket信息加入到List表中	
 								Client_table_item item = new Client_table_item();
-								// 将地址加入到
 								item.setDestNum(original_data.getSourAddr());
 								item.setSocket(connections.get(i).getSocket());	
 								System.out.println("加入的地址为:"+original_data.getSourAddr());
@@ -77,21 +82,21 @@ public class Mes_Manage extends Thread{
 					}
 				}
 			}
-			//表处理前 
-			// 2:获得目的地址并向其添加数据	
+
+			// 2:将获得数据找到对应的目的地址	
 			for (int j = 0; j < connections.size(); j++) {
+				// 如果数据不为空
 				if(connections.get(j).getData()!=null){
 					msg original_data2=new msg(connections.get(j).getData());
 					// 如果获得的数据CCR没有错，并且数据不是心跳包
 					if(original_data2.getMsgType()!=1 && original_data2.CCR_check()){
-						// 判读队列中是否为空，或者队列中有要发送的目的地址
+						// 如果表不为空
 						if(!table.isEmpty()){
-						// 循环遍历列表查找目的地址
-								// 找到了目的地址						
-								int SourAddr=iscontains(original_data2.getDestAddr());
+							// 循环遍历列表查找目的地址
+							int SourAddr=iscontains(original_data2.getDestAddr());
+								// 如果找到了目的地址						
 								if(SourAddr!= -1){
-									//将数据加到这个列表元素中
-									// 目前的数据加到源目的地址上去		
+									//将数据加到这个列表元素中	
 									table.get(SourAddr).setData(connections.get(j).getData());
 									//将数据的长度加到这个列表元素中
 									table.get(SourAddr).setDataLen(connections.get(j).getDateLen());
@@ -118,7 +123,7 @@ public class Mes_Manage extends Thread{
 			
 			
 			
-			// 4：清空列表，等待下一次数据接受	
+			// 3：清空列表，等待下一次数据接受	
 				for (int i = 0; i < connections.size(); i++) {
 					connections.get(i).setDataLen(0);
 					connections.get(i).setMessage(null);
